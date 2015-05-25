@@ -9,10 +9,17 @@ Package.describe({
 Package.onUse(function(api) {
   api.versionsFrom('1.1.0.2');
   api.use([
-    'coffeescript'
+    'coffeescript',
+    'mongo',
+    'maximal:package-base'
   ]);
 
-  api.addFiles('server-transform.coffee');
+  api.addFiles([
+    'server-transform.coffee',
+    'extend.coffee'
+  ], 'server');
+
+  api.export('ServerTransform');
 });
 
 Package.onTest(function(api) {
