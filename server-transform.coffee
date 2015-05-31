@@ -21,7 +21,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       return doc
     computation = null
 
-    cursor.observe
+    handle = cursor.observe
       added: (doc) ->
         publication.added collectionName, doc._id, transform(doc)
 
@@ -38,3 +38,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
 
       removed: (doc) ->
         publication.removed collectionName, doc._id
+
+    publication.onStop ->
+      handle.stop()
+      computation.stop()
