@@ -47,6 +47,20 @@ Posts.serverTransform({
 });
 ````
 
+If a computed property returns a new cursor, the cursor will also be transformed and published (this works recursively)
+
+````javascript
+Posts.serverTransform({
+  allAuthors: function(doc) {
+    return Authors.find({
+      postId: doc._id
+    }, {
+      reactive: true
+    });
+  }
+});
+````
+
 ### Publishing
 make sure that you publish a `Posts` cursor with `Meteor.publishTransformed` to apply the transformations
 ````javascript

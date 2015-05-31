@@ -26,6 +26,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
     transform = (doc) =>
       doc = @applyTransformations collection?._serverTransformations, doc
       doc = @applyTransformations cursor?._serverTransformations, doc
+      doc = @transformSubCursors publication, doc
       return doc
     computation = null
 
@@ -50,3 +51,9 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
     publication.onStop ->
       handle.stop()
       computation.stop()
+
+  transformSubCursors: (publication, obj) ->
+    for key, cursor of obj when cursor._cursorDescription?
+      @transformedPublication publication, cursor
+      delete obj[key]
+    return obj

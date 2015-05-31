@@ -1,6 +1,7 @@
 Meteor.startup ->
   Posts = new Mongo.Collection 'posts'
   Comments = new Mongo.Collection 'comments'
+  Authors = new Mongo.Collection 'authors'
 
   if Meteor.isServer
     Comments.allow
@@ -17,6 +18,8 @@ Meteor.startup ->
 
     id = Posts.insert name: 'Test'
     Comments.insert postId: id, text: 'Hello'
+    Authors.insert postId: id, fullname: 'Max Nowack'
+    Authors.insert postId: id, fullname: 'John Doe'
 
     Posts.serverTransform (doc) ->
       doc.commentsCount = Comments.find({postId: doc._id}, reactive: true).count()
@@ -32,6 +35,11 @@ Meteor.startup ->
 
     Meteor.publishTransformed 'posts_3', ->
       Posts.find().serverTransform test_3: true
+
+    Meteor.publishTransformed 'posts_4', ->
+      Posts.find().serverTransform
+        authors: (doc) ->
+          Authors.find {postId: doc._id}, reactive: true
 
     Tinytest.add 'ServerTransform - single property', (test) ->
       Comments.serverTransform
@@ -65,4 +73,11 @@ Meteor.startup ->
       Meteor.subscribe 'posts_3', ->
         post = Posts.findOne()
         test.isTrue post.test_3
+        next()
+
+    Tinytest.addAsync 'ServerTransform - sub cursor publication', (test, next) ->
+      Meteor.subscribe 'posts_4', ->
+        post = Posts.findOne()
+        cursor = Authors.find postId: post._id
+        test.equal cursor.count(), 2
         next()
