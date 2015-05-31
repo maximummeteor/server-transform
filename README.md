@@ -1,4 +1,4 @@
-# maximum:server-transform [![Build Status](https://travis-ci.org/maximummeteor/server-transform.svg)](https://travis-ci.org/maximummeteor/server-transform)
+# Meteor serverside transform [![Build Status](https://travis-ci.org/maximummeteor/server-transform.svg)](https://travis-ci.org/maximummeteor/server-transform)
 Meteor package to transform documents on publish
 
 ## Installation
@@ -29,7 +29,8 @@ Posts.serverTransform(function(doc) {
 normally you want to add a custom (computed) property instead of transforming the whole document
 ````javascript
 Posts.computedProperty('commentsCount', function(doc) {
-  // example: persist the comments count as a property (without publishing comments and also reactive!)
+  // example: persist the comments count as a property
+  // (without publishing any comments and also reactive!)
   return Comments.find({
     postId: doc._id
   }).count();
