@@ -3,19 +3,6 @@ packageSettings =
   mixins: ['singleton', 'logging']
 
 ServerTransform = class ServerTransform extends PackageBase packageSettings
-  @_utils:
-    extendFunctions: (obj, dict) ->
-      result = {}
-      for key of dict
-        do (key) ->
-          impl = dict[key]
-
-          oldImpl = obj[key]
-          obj[key] = impl
-
-          result[key] = (args2...) -> oldImpl.call(args2...)
-      return result
-
   publishTransformed: (name, fn) ->
     Meteor.publish name, ->
       cursors = fn.apply this, arguments

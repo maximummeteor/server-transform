@@ -12,13 +12,13 @@ Package.onUse(function(api) {
     'coffeescript',
     'mongo',
     'maximal:package-base@1.0.0',
+    'maximal:reactive-cursors@0.1.0',
     'dburles:mongo-collection-instances@0.3.3',
     'peerlibrary:server-autorun@0.2.3'
   ]);
 
   api.addFiles([
     'server-transform.coffee',
-    'reactive-cursor.coffee',
     'extend.coffee'
   ], 'server');
 
