@@ -11,11 +11,14 @@ Package.onUse(function(api) {
   api.use([
     'coffeescript',
     'mongo',
-    'maximal:package-base'
+    'maximal:package-base@1.0.0',
+    'dburles:mongo-collection-instances@0.3.3',
+    'peerlibrary:server-autorun@0.2.3'
   ]);
 
   api.addFiles([
     'server-transform.coffee',
+    'reactive-cursor.coffee',
     'extend.coffee'
   ], 'server');
 
@@ -23,8 +26,10 @@ Package.onUse(function(api) {
 });
 
 Package.onTest(function(api) {
-  api.use('tinytest');
-  api.use('coffeescript');
-  api.use('maximal:server-transform');
+  api.use([
+    'tinytest',
+    'coffeescript',
+    'maximal:server-transform'
+  ]);
   api.addFiles('tests/server-transform.coffee');
 });

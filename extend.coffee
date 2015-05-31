@@ -5,6 +5,7 @@ Mongo.Collection::serverTransform = (fn) ->
   @_serverTransformations.push fn
 
 Mongo.Collection::applyServerTransformation = (doc) ->
+  @_serverTransformations = [] unless @_serverTransformations?
   for fn in @_serverTransformations
     doc = fn doc
   return doc
