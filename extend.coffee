@@ -1,4 +1,4 @@
-Meteor.publishTransformed = ServerTransform.getInstance().publishTransformed
+Meteor.publishTransformed = ServerTransform.publishTransformed
 
 Mongo.Collection::serverTransform = (definition) ->
   @_serverTransformations = [] unless @_serverTransformations?

@@ -1,26 +1,26 @@
 packageSettings =
   name: 'ServerTransform'
-  mixins: ['singleton', 'logging']
+  mixins: ['logging']
 
 ServerTransform = class ServerTransform extends PackageBase packageSettings
-  applyTransformations: (transformations, doc) ->
+  @applyTransformations: (transformations, doc) ->
     return doc unless transformations?
 
     for fn in transformations
       doc = fn doc
     return doc
 
-  publishTransformed: (name, fn) ->
+  @publishTransformed: (name, fn) ->
     Meteor.publish name, ->
       cursors = fn.apply this, arguments
       cursors = [cursors] unless cursors instanceof Array
 
       for cursor in cursors
-        ServerTransform.getInstance().transformedPublication this, cursor
+        ServerTransform.transformedPublication this, cursor
 
       @ready()
 
-  transformedPublication: (publication, cursor) ->
+  @transformedPublication: (publication, cursor) ->
     collectionName = cursor._cursorDescription.collectionName
     collection = Mongo.Collection.get collectionName
     transform = (doc) =>
@@ -52,7 +52,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       handle.stop()
       computation.stop()
 
-  transformSubCursors: (publication, obj) ->
+  @transformSubCursors: (publication, obj) ->
     for key, cursor of obj when cursor._cursorDescription?
       @transformedPublication publication, cursor
       delete obj[key]

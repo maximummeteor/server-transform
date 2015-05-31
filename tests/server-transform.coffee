@@ -47,7 +47,7 @@ Meteor.startup ->
           return 'max'
 
       comment = Comments.findOne()
-      comment = ServerTransform.getInstance().applyTransformations Comments._serverTransformations, comment
+      comment = ServerTransform.applyTransformations Comments._serverTransformations, comment
 
       test.equal comment.authorName, 'max'
 
