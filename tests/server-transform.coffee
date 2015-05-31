@@ -25,6 +25,16 @@ Meteor.startup ->
     Meteor.publishTransformed 'posts', ->
       Posts.find()
 
+    Tinytest.add 'ServerTransform - single property', (test) ->
+      Comments.computedProperty 'authorName', (doc) ->
+        return 'max'
+
+      comment = Comments.findOne()
+      comment = Comments.applyServerTransformation comment
+
+      test.equal comment.authorName, 'max'
+
+
   if Meteor.isClient
     Tinytest.addAsync 'ServerTransform - simple', (test, next) ->
       Meteor.subscribe 'posts', ->
