@@ -14,6 +14,7 @@ Initialize a collection
 var Posts = new Mongo.Collection('posts');
 ````
 
+#### Configure Transformations
 add a transform method (you can add multiple methods, not only one)
 ````javascript
 // example: persist the author name on the post object (reactive)
@@ -35,7 +36,8 @@ Posts.computedProperty('commentsCount', function(doc) {
 });
 ````
 
-then publish a `Posts` cursor with `Meteor.publishTransformed`
+#### Publishing
+make sure that you publish a `Posts` cursor with `Meteor.publishTransformed` to apply the transformations
 ````javascript
 Meteor.publishTransformed('posts', function() {
   return Posts.find(); // you can also publish multiple cursors by returning an array
