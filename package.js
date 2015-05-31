@@ -1,8 +1,8 @@
 Package.describe({
-  name: 'maximal:server-transform',
+  name: 'maximum:server-transform',
   version: '0.1.0',
   summary: 'Meteor package to transform documents on publish',
-  git: 'https://github.com/maximalmeteor/server-transform',
+  git: 'https://github.com/maximummeteor/server-transform',
   documentation: 'README.md'
 });
 
@@ -11,8 +11,8 @@ Package.onUse(function(api) {
   api.use([
     'coffeescript',
     'mongo',
-    'maximal:package-base@1.0.0',
-    'maximal:reactive-cursors@0.1.0',
+    'maximum:package-base@1.0.0',
+    'maximum:reactive-cursors@0.1.0',
     'dburles:mongo-collection-instances@0.3.3',
     'peerlibrary:server-autorun@0.2.3'
   ]);
@@ -29,7 +29,7 @@ Package.onTest(function(api) {
   api.use([
     'tinytest',
     'coffeescript',
-    'maximal:server-transform'
+    'maximum:server-transform'
   ]);
   api.addFiles('tests/server-transform.coffee');
 });

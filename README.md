@@ -1,10 +1,10 @@
-# maximal:server-transform [![Build Status](https://travis-ci.org/maximalmeteor/server-transform.svg)](https://travis-ci.org/maximalmeteor/server-transform)
+# maximum:server-transform [![Build Status](https://travis-ci.org/maximummeteor/server-transform.svg)](https://travis-ci.org/maximummeteor/server-transform)
 Meteor package to transform documents on publish
 
 ## Installation
 
 ```
-    meteor add maximal:server-transform
+    meteor add maximum:server-transform
 ```
 
 ## Usage
