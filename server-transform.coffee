@@ -13,6 +13,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
   @publishTransformed: (name, fn) ->
     Meteor.publish name, ->
       cursors = fn.apply this, arguments
+      return unless cursors?
       cursors = [cursors] unless cursors instanceof Array
 
       for cursor in cursors
@@ -21,6 +22,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       @ready()
 
   @transformedPublication: (publication, cursor) ->
+    return unless cursor?
     collectionName = cursor._cursorDescription.collectionName
     collection = Mongo.Collection.get collectionName
     transform = (doc) =>
@@ -49,8 +51,8 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
         publication.removed collectionName, doc._id
 
     publication.onStop ->
-      handle.stop()
-      computation.stop()
+      handle?.stop()
+      computation?.stop()
 
   @transformSubCursors: (publication, obj) ->
     for key, cursor of obj when cursor._cursorDescription?
