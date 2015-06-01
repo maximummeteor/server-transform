@@ -13,7 +13,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
   @publishTransformed: (name, fn) ->
     Meteor.publish name, ->
       cursors = fn.apply this, arguments
-      return unless cursors?
+      return @ready() unless cursors?
       cursors = [cursors] unless cursors instanceof Array
 
       for cursor in cursors
