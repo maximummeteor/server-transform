@@ -30,21 +30,21 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       doc = @applyTransformations cursor?._serverTransformations, doc
       doc = @transformSubCursors publication, doc
       return doc
-    computation = null
+    computations = {}
 
     handle = cursor.observe
       added: (doc) ->
         publication.added collectionName, doc._id, transform(doc)
 
-        computation.stop() if computation?
-        computation = Tracker.autorun ->
+        computations[doc._id].stop() if computations[doc._id]?
+        computations[doc._id] = Tracker.autorun ->
           publication.changed collectionName, doc._id, transform(doc)
 
       changed: (doc) ->
         publication.changed collectionName, doc._id, transform(doc)
 
-        computation.stop() if computation?
-        computation = Tracker.autorun ->
+        computations[doc._id].stop() if computations[doc._id]?
+        computations[doc._id] = Tracker.autorun ->
           publication.changed collectionName, doc._id, transform(doc)
 
       removed: (doc) ->
@@ -52,7 +52,8 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
 
     publication.onStop ->
       handle?.stop()
-      computation?.stop()
+      for key, computation in computations
+        computation.stop()
 
   @transformSubCursors: (publication, obj) ->
     for key, cursor of obj when cursor?._cursorDescription?
