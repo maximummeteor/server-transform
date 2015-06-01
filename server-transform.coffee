@@ -32,22 +32,22 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       return doc
     computations = {}
 
-    handle = cursor.observe
-      added: (doc) ->
-        publication.added collectionName, doc._id, transform(doc)
-
-        computations[doc._id].stop() if computations[doc._id]?
-        computations[doc._id] = Tracker.autorun ->
-          publication.changed collectionName, doc._id, transform(doc)
-
-      changed: (doc) ->
+    startTracking = (doc) ->
+      computations[doc._id].stop() if computations[doc._id]?
+      computations[doc._id] = Tracker.autorun ->
         publication.changed collectionName, doc._id, transform(doc)
 
-        computations[doc._id].stop() if computations[doc._id]?
-        computations[doc._id] = Tracker.autorun ->
-          publication.changed collectionName, doc._id, transform(doc)
-
+    handle = cursor.observe
+      added: (doc) ->
+        publication.added collectionName, doc._id, doc
+        startTracking doc
+      changed: (doc) ->
+        startTracking doc
       removed: (doc) ->
+        if computations[doc._id]?
+          computations[doc._id].stop()
+          delete computations[doc._id]
+
         publication.removed collectionName, doc._id
 
     publication.onStop ->
