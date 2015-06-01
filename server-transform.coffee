@@ -55,7 +55,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       computation?.stop()
 
   @transformSubCursors: (publication, obj) ->
-    for key, cursor of obj when cursor._cursorDescription?
+    for key, cursor of obj when cursor?._cursorDescription?
       @transformedPublication publication, cursor
       delete obj[key]
     return obj
