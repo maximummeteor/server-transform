@@ -37,21 +37,26 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       computations[doc._id] = Tracker.autorun ->
         publication.changed collectionName, doc._id, transform(doc)
 
-    handle = cursor.observe
+    handles = []
+
+    handles.push cursor.observeChanges
+      changed: (id, fields) ->
+        publication.changed collectionName, id, fields
+
+    handles.push cursor.observe
       added: (doc) ->
         publication.added collectionName, doc._id, doc
         startTracking doc
       changed: (doc) ->
         startTracking doc
       removed: (doc) ->
-        if computations[doc._id]?
-          computations[doc._id].stop()
-          delete computations[doc._id]
-
         publication.removed collectionName, doc._id
+        return unless computations[doc._id]?
+        computations[doc._id].stop()
+        delete computations[doc._id]
 
     publication.onStop ->
-      handle?.stop()
+      handle?.stop() for handle in handles
       for key, computation in computations
         computation.stop()
 
