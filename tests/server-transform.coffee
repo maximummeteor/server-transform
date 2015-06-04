@@ -4,6 +4,7 @@ Meteor.startup ->
   Authors = new Mongo.Collection 'authors'
 
   if Meteor.isServer
+    ServerTransform.enableLogging()
     Comments.allow
       insert: -> true
       update: -> true
@@ -17,7 +18,6 @@ Meteor.startup ->
     Comments.remove {}
 
     id = Posts.insert name: 'Test'
-    Comments.insert postId: id, text: 'Hello'
     Authors.insert postId: id, fullname: 'Max Nowack'
     Authors.insert postId: id, fullname: 'John Doe'
 
@@ -26,6 +26,8 @@ Meteor.startup ->
       return doc
 
     Meteor.publishTransformed 'posts_1', ->
+      Comments.remove {}
+      Comments.insert postId: id, text: 'Hello'
       Posts.find()
 
     Meteor.publishTransformed 'posts_2', ->
@@ -42,14 +44,14 @@ Meteor.startup ->
           Authors.find {postId: doc._id}, reactive: true
 
     Tinytest.add 'ServerTransform - single property', (test) ->
-      Comments.serverTransform
+      Posts.serverTransform
         authorName: (doc) ->
           return 'max'
 
-      comment = Comments.findOne()
-      comment = ServerTransform.applyTransformations Comments._serverTransformations, comment
+      post = Posts.findOne()
+      post = ServerTransform.applyTransformations Posts._serverTransformations, post
 
-      test.equal comment.authorName, 'max'
+      test.equal post.authorName, 'max'
 
 
   if Meteor.isClient
@@ -58,10 +60,14 @@ Meteor.startup ->
         test.isTrue Posts.find().count() > 0
         post = Posts.findOne()
         Comments.insert postId: post._id, text: 'Hello'
-        Meteor.setTimeout ->
-          test.isTrue Posts.findOne(post._id).commentsCount > 1
-          next()
-        , 2000
+        Posts.find(_id: post._id).observe
+          changed: (doc) ->
+            test.isTrue doc.commentsCount > 1
+            next()
+        # Meteor.setTimeout ->
+        #   test.isTrue Posts.findOne(post._id).commentsCount > 1
+        #   next()
+        # , 2000
 
     Tinytest.addAsync 'ServerTransform - local transform', (test, next) ->
       Meteor.subscribe 'posts_2', ->

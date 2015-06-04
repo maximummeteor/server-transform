@@ -35,10 +35,12 @@ class @PublishHelper
 
     ServerTransform.log ['Subscription.added', collectionName + ':' + docId]
     @meteorSub.added collectionName, docId, doc
-    @_addDocHash collectionName, doc
+    @_addDocHash collectionName, _.clone doc
 
-  changed: (collectionName, id, changes) ->
-    return unless @_shouldSendChanges(collectionName, id, changes)
+  changed: (collectionName, id, doc) ->
+    return unless @_isDocPublished(collectionName, id)
+    changes = @_computeChanges collectionName, id, doc
+    return if _.isEmpty changes
 
     ServerTransform.log ['Subscription.changed', collectionName + ':' + id]
     @meteorSub.changed collectionName, id, changes
@@ -48,6 +50,15 @@ class @PublishHelper
     ServerTransform.log ['Subscription.removed', collectionName + ':' + id.valueOf()]
     @refCounter.decrement collectionName, id
 
+  _computeChanges: (collectionName, id, doc) ->
+    existingDoc = @docHash[@_buildHashKey(collectionName, id)]
+    return doc unless existingDoc
+    changes = {}
+
+    for i of doc when doc.hasOwnProperty(i) and !_.isEqual(doc[i], existingDoc[i])
+      changes[i] = doc[i]
+    return changes
+
   _addDocHash: (collectionName, doc) ->
     @docHash[@_buildHashKey(collectionName, doc._id)] = doc
 
@@ -55,9 +66,6 @@ class @PublishHelper
     key = @_buildHashKey(collectionName, id)
     existingDoc = @docHash[key] or {}
     @docHash[key] = _.extend(existingDoc, changes)
-
-  _shouldSendChanges: (collectionName, id, changes) ->
-    @_isDocPublished(collectionName, id) and @_hasDocChanged(collectionName, id, changes)
 
   _isDocPublished: (collectionName, id) ->
     key = @_buildHashKey(collectionName, id)

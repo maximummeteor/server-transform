@@ -38,9 +38,20 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
     computations = {}
 
     startTracking = (doc) ->
-      computations[doc._id].stop() if computations[doc._id]?
-      computations[doc._id] = Tracker.autorun ->
-        publication.changed collectionName, doc._id, transform(doc)
+      start = ->
+        computations[doc._id] = Tracker.autorun ->
+          ServerTransform.log "autorun: #{collectionName}:#{doc._id}"
+          publication.changed collectionName, doc._id, transform(doc)
+        ServerTransform.log "Tracking started: #{collectionName}:#{doc._id}"
+
+      return start() unless computations[doc._id]?
+      return start() unless computations[doc._id].invalidated
+
+      computation.onInvalidate ->
+        Tracker.afterFlush ->
+          computations[doc._id].stop()
+          ServerTransform.log "Tracking stopped: #{collectionName}:#{doc._id}"
+          start()
 
     handles = []
 
@@ -50,7 +61,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
 
     handles.push cursor.observe
       added: (doc) ->
-        publication.added collectionName, doc._id, doc
+        publication.added collectionName, doc._id, transform(doc)
         startTracking doc
       changed: (doc) ->
         startTracking doc
