@@ -15,6 +15,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       cursors = fn.apply this, arguments
       return @ready() unless cursors?
       cursors = [cursors] unless cursors instanceof Array
+      ServerTransform.log 'Publication started'
 
       for cursor in cursors
         ServerTransform.transformedPublication this, cursor
@@ -59,6 +60,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       handle?.stop() for handle in handles
       for key, computation in computations
         computation.stop()
+      ServerTransform.log 'Publication stopped'
 
   @transformSubCursors: (publication, obj) ->
     for key, cursor of obj when cursor?._cursorDescription?

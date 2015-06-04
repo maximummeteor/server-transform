@@ -11,7 +11,7 @@ Package.onUse(function(api) {
   api.use([
     'coffeescript',
     'mongo',
-    'maximum:package-base@1.0.0',
+    'maximum:package-base@1.1.2',
     'maximum:reactive-cursors@0.1.0',
     'dburles:mongo-collection-instances@0.3.3',
     'peerlibrary:server-autorun@0.2.3'
