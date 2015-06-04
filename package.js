@@ -1,6 +1,6 @@
 Package.describe({
   name: 'maximum:server-transform',
-  version: '0.3.7',
+  version: '0.3.8',
   summary: 'Meteor package to transform documents on publish',
   git: 'https://github.com/maximummeteor/server-transform',
   documentation: 'README.md'
@@ -18,6 +18,7 @@ Package.onUse(function(api) {
   ]);
 
   api.addFiles([
+    'publish_helper.coffee',
     'server-transform.coffee',
     'extend.coffee'
   ], 'server');

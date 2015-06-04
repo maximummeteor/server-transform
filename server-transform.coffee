@@ -16,9 +16,13 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       return @ready() unless cursors?
       cursors = [cursors] unless cursors instanceof Array
       ServerTransform.log 'Publication started'
+      publishHelper = new PublishHelper(this)
 
       for cursor in cursors
-        ServerTransform.transformedPublication this, cursor
+        ServerTransform.transformedPublication publishHelper, cursor
+
+      @onStop ->
+        publishHelper = null
 
       @ready()
 
