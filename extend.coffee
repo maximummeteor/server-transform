@@ -1,17 +1,20 @@
 Meteor.publishTransformed = ServerTransform.publishTransformed
 
+definitionTransform = (definition) -> (docs...) ->
+  doc = docs[0]
+  for name, prop of definition
+    if typeof prop is 'function'
+      doc[name] = prop.apply this, docs
+    else
+      doc[name] = prop
+  return doc
+
 Mongo.Collection::serverTransform = (definition) ->
   @_serverTransformations = [] unless @_serverTransformations?
   if typeof definition is 'function'
     @_serverTransformations.push definition
   else
-    @_serverTransformations.push (doc) ->
-      for name, prop of definition
-        if typeof prop is 'function'
-          doc[name] = prop.call this, doc
-        else
-          doc[name] = prop
-      return doc
+    @_serverTransformations.push definitionTransform definition
 
 initialized = false
 Meteor.addCollectionExtension (name, options) ->
@@ -27,12 +30,6 @@ Meteor.addCollectionExtension (name, options) ->
     if typeof definition is 'function'
       @_serverTransformations.push definition
     else
-      @_serverTransformations.push (doc) ->
-        for name, prop of definition
-          if typeof prop is 'function'
-            doc[name] = prop.call this, doc
-          else
-            doc[name] = prop
-        return doc
+      @_serverTransformations.push definitionTransform definition
 
     return this

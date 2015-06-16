@@ -3,11 +3,10 @@ packageSettings =
   mixins: ['logging']
 
 ServerTransform = class ServerTransform extends PackageBase packageSettings
-  @applyTransformations: (transformations, doc) ->
-    return doc unless transformations?
-
+  @applyTransformations: (transformations = [], docs...) ->
+    doc = docs[0]
     for fn in transformations
-      doc = fn doc
+      doc = fn.apply this, docs
     return doc
 
   @publishTransformed: (name, fn) ->
@@ -26,14 +25,17 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
 
       @ready()
 
-  @transformedPublication: (publication, cursor) ->
+  @transformedPublication: (publication, cursor, parentDocs...) ->
     return unless cursor?
     collectionName = cursor._cursorDescription.collectionName
     collection = Mongo.Collection.get collectionName
     transform = (doc) =>
-      doc = @applyTransformations collection?._serverTransformations, doc
-      doc = @applyTransformations cursor?._serverTransformations, doc
-      doc = @transformSubCursors publication, doc
+      transforms = collection?._serverTransformations or []
+      transforms = transforms.concat (cursor?._serverTransformations or [])
+      docs = [doc].concat parentDocs
+
+      doc = @applyTransformations.apply this, [transforms].concat docs
+      doc = @transformSubCursors.apply this, [publication].concat docs
       return doc
     computations = {}
 
@@ -77,8 +79,9 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
         computation.stop()
       ServerTransform.log 'Publication stopped'
 
-  @transformSubCursors: (publication, obj) ->
+  @transformSubCursors: (publication, obj, parentDocs...) ->
+    docs = [obj].concat parentDocs
     for key, cursor of obj when cursor?._cursorDescription?
-      @transformedPublication publication, cursor
+      @transformedPublication.apply this, [publication, cursor].concat docs
       delete obj[key]
     return obj
