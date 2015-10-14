@@ -49,7 +49,7 @@ ServerTransform = class ServerTransform extends PackageBase packageSettings
       return start() unless computations[doc._id]?
       return start() unless computations[doc._id].invalidated
 
-      computation.onInvalidate ->
+      computations[doc._id].onInvalidate ->
         Tracker.afterFlush ->
           computations[doc._id].stop()
           ServerTransform.log "Tracking stopped: #{collectionName}:#{doc._id}"
