@@ -11,10 +11,11 @@ Package.onUse(function(api) {
   api.use([
     'coffeescript',
     'mongo',
+    'underscore',
     'maximum:package-base@1.1.2',
-    'maximum:reactive-cursors@0.1.0',
+    'maximum:reactive-cursors@0.2.0',
     'dburles:mongo-collection-instances@0.3.3',
-    'peerlibrary:server-autorun@0.2.6'
+    'peerlibrary:server-autorun@0.5.1'
   ]);
 
   api.addFiles([
@@ -30,6 +31,7 @@ Package.onTest(function(api) {
   api.use([
     'tinytest',
     'coffeescript',
+    'mongo',
     'maximum:server-transform'
   ]);
   api.addFiles('tests/server-transform.coffee');
