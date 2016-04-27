@@ -1,6 +1,6 @@
 Package.describe({
   name: 'maximum:server-transform',
-  version: '0.4.1',
+  version: '0.4.2',
   summary: 'Meteor package to transform documents on publish',
   git: 'https://github.com/maximummeteor/server-transform',
   documentation: 'README.md'
@@ -14,8 +14,8 @@ Package.onUse(function(api) {
     'underscore',
     'maximum:package-base@1.1.2',
     'maximum:reactive-cursors@0.2.0',
-    'dburles:mongo-collection-instances@0.3.3',
-    'peerlibrary:server-autorun@0.5.1'
+    'dburles:mongo-collection-instances@0.3.5',
+    'peerlibrary:server-autorun@0.5.2'
   ]);
 
   api.addFiles([
