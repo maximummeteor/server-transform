@@ -17,7 +17,7 @@ Mongo.Collection::serverTransform = (definition) ->
     @_serverTransformations.push definitionTransform definition
 
 initialized = false
-Meteor.addCollectionExtension (name, options) ->
+CollectionExtensions.addExtension (name, options) ->
   return if initialized
   initialized = true
   Cursor = Object.getPrototypeOf(@find {_id: null}).constructor
