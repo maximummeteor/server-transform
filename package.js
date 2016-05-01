@@ -1,6 +1,6 @@
 Package.describe({
   name: 'maximum:server-transform',
-  version: '0.4.2',
+  version: '0.5.0',
   summary: 'Meteor package to transform documents on publish',
   git: 'https://github.com/maximummeteor/server-transform',
   documentation: 'README.md'
