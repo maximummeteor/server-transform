@@ -14,6 +14,7 @@ Package.onUse(function(api) {
     'underscore',
     'maximum:package-base@1.1.2',
     'maximum:reactive-cursors@0.2.0',
+    'lai:collection-extensions@0.2.1_1',
     'dburles:mongo-collection-instances@0.3.5',
     'peerlibrary:server-autorun@0.5.2'
   ]);
